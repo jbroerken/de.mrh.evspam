@@ -117,24 +117,32 @@ extern "C"
         while ((u32_LoopCount += 1) < MRH_EVENT_SPAM_LOOP_COUNT);
 
         // Send all
+        c_Logger.Log(MRH::AB::Logger::INFO, "Sending " +
+                                            std::to_string(dq_Event.size()) +
+                                            " events.",
+                     "Main.cpp", __LINE__);
+
         while (dq_Event.empty() == false)
         {
             MRH_Event* p_Send = dq_Event.front();
             dq_Event.pop_front();
 
-            switch (MRH_A_SendEvent(p_SendContext, &p_Send)) /* Consumes p_Event */
+            while (p_Send != NULL)
             {
-                case MRH_A_Send_Result::MRH_A_SEND_FAILURE:
-                    c_Logger.Log(MRH::AB::Logger::ERROR, "Failed to send output event!",
-                                 "Main.cpp", __LINE__);
-                    return -1;
+                switch (MRH_A_SendEvent(p_SendContext, &p_Send)) /* Consumes p_Event */
+                {
+                    case MRH_A_Send_Result::MRH_A_SEND_FAILURE:
+                        c_Logger.Log(MRH::AB::Logger::ERROR, "Failed to send output event!",
+                                     "Main.cpp", __LINE__);
+                        return -1;
 
-                case MRH_A_Send_Result::MRH_A_SEND_OK:
-                    c_Logger.Log(MRH::AB::Logger::INFO, "Sent output event.",
-                                 "Main.cpp", __LINE__);
+                    case MRH_A_Send_Result::MRH_A_SEND_OK:
+                        c_Logger.Log(MRH::AB::Logger::INFO, "Sent output event.",
+                                     "Main.cpp", __LINE__);
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -161,11 +169,11 @@ extern "C"
 
         if (v_Response.empty() == true)
         {
+            MRH::AB::Logger::Singleton().Log(MRH::AB::Logger::INFO, "All responses received, stopping.",
+                                                 "Main.cpp", __LINE__);
             return -1;
         }
 
-        MRH::AB::Logger::Singleton().Log(MRH::AB::Logger::INFO, "All responses received, stopping.",
-                                             "Main.cpp", __LINE__);
         return 0;
     }
 
