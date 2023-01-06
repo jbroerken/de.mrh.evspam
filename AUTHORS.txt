@@ -1,0 +1,7 @@
+###
+#
+#  de.mrh.evspam Authors
+#
+###
+
+Jens Brörken <jens.broerken@icloud.com>

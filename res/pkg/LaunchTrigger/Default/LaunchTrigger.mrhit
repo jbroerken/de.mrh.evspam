@@ -1,0 +1,20 @@
+<MRHBF_1>
+
+####################
+#  Compare Method  #
+####################
+
+<Compare>{
+    <Method><1>
+    <Similarity><0.75>
+}
+
+##############
+#  Triggers  #
+##############
+
+<Trigger>{
+    <String><spamtest>
+    <Weight><100>
+    <Value><0>
+}

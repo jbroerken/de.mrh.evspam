@@ -1,0 +1,2 @@
+CMake build files are located in this directory.
+Use the with CMake generated makefile to compile the project.
