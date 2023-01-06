@@ -20,6 +20,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <deque>
 
 // External
 #include <libmrh/Send/MRH_SendEvent.h>
@@ -61,7 +62,7 @@ extern "C"
                      "Main.cpp", __LINE__);
 
         // Create all events to send
-        std::vector<MRH_Event*> v_Event;
+        std::deque<MRH_Event*> dq_Event;
         MRH_Uint32 u32_LoopCount = 0;
 
         do
@@ -80,7 +81,7 @@ extern "C"
                     return -1;
                 }
 
-                v_Event.emplace_back(p_Event);
+                dq_Event.emplace_back(p_Event);
 
                 // Next to create
                 switch (u32_ToCreate)
@@ -116,9 +117,12 @@ extern "C"
         while ((u32_LoopCount += 1) < MRH_EVENT_SPAM_LOOP_COUNT);
 
         // Send all
-        while (v_Event.empty() == false)
+        while (dq_Event.empty() == false)
         {
-            switch (MRH_A_SendEvent(p_SendContext, &(v_Event.front()))) /* Consumes p_Event */
+            MRH_Event* p_Send = dq_Event.front();
+            dq_Event.pop_front();
+
+            switch (MRH_A_SendEvent(p_SendContext, &p_Send)) /* Consumes p_Event */
             {
                 case MRH_A_Send_Result::MRH_A_SEND_FAILURE:
                     c_Logger.Log(MRH::AB::Logger::ERROR, "Failed to send output event!",
